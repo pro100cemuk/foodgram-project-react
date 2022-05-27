@@ -19,7 +19,7 @@ services:
       - ./.env
 
   frontend:
-    image: pro100cemuk/foodgram_frontend:latest
+    image: pro100cemuk/foodgram_frontend:v1
     volumes:
       - ../frontend/:/app/result_build/
 
