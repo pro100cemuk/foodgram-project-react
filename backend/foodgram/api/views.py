@@ -108,12 +108,14 @@ class RecipesViewSet(ModelViewSet):
     )
     def download_shopping_cart(self, request):
         user = request.user
-        ingredients = IngredientRecipe.objects.filter(
-            recipe__shopping_carts__user=user
+        recipes = user.shopping_cart.recipes.prefetch_related('ingredients')
+        ingredients = recipes.order_by(
+            'ingredients__ingredient__name'
         ).values(
-            'ingredient__name',
-            'ingredient__measurement_unit',
-        ).annotate(sum_amount=Sum('amount'))
+            'ingredients__ingredient__measurement_unit'
+        ).annotate(
+            sum_amount=Sum('ingredients__amount')
+        )
         shopping_cart = '\n'.join([
             f'{ingredient["ingredient__name"]} - {ingredient["sum_amount"]}'
             f'{ingredient["ingredient__measurement_unit"]}'
