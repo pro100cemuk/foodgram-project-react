@@ -27,7 +27,6 @@ class IngredientsViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = IngredientSerializer
-    pagination_class = CustomPagination
     filter_class = IngredientFilter
 
 
