@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.filters import IngredientFilter, RecipeFilter
-from api.models import (Favorite, Ingredient, Recipe,
+from api.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
                         ShoppingCart, Tag)
 from api.pagination import CustomPagination
 from api.permissions import IsAuthorOrAdminOrReadOnly
@@ -108,14 +108,14 @@ class RecipesViewSet(ModelViewSet):
     )
     def download_shopping_cart(self, request):
         user = request.user
-        recipes = user.shopping_cart.recipes.prefetch_related('ingredients')
-        ingredients = recipes.order_by(
-            'ingredients__ingredient__name'
+        ingredients = IngredientRecipe.objects.filter(
+            recipe__shopping_carts__user=user
+        ).order_by(
+            'ingredient__name'
         ).values(
-            'ingredients__ingredient__measurement_unit'
-        ).annotate(
-            sum_amount=Sum('ingredients__amount')
-        )
+            'ingredient__name',
+            'ingredient__measurement_unit',
+        ).annotate(sum_amount=Sum('amount'))
         shopping_cart = '\n'.join([
             f'{ingredient["ingredient__name"]} - {ingredient["sum_amount"]}'
             f'{ingredient["ingredient__measurement_unit"]}'
