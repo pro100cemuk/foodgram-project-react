@@ -15,8 +15,6 @@ def post_delete_favorite_shopping_cart(request, model, obj_id):
             recipe=recipe
         )
         serializer = RecipeToRepresentationSerializer(recipe)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     obj = get_object_or_404(model, recipe__id=obj_id)
     obj.delete()
