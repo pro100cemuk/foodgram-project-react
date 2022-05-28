@@ -186,7 +186,6 @@ class RecipeToRepresentationSerializer(serializers.ModelSerializer):
 class FavoriteShoppingCartSerializer(serializers.Serializer):
     class Meta:
         fields = ('user', 'recipe')
-        read_only_fileds = ('model')
 
     def validate(self, data):
         request = self.context.get('request')
