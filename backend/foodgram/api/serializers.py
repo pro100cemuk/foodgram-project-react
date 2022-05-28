@@ -1,7 +1,8 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from api.models import Ingredient, IngredientRecipe, Recipe, Tag
+from api.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                        ShoppingCart, Tag)
 from users.serializers import CustomUserSerializer
 
 
@@ -134,9 +135,9 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         IngredientRecipe.objects.bulk_create(
             [
                 IngredientRecipe(
+                    recipe=recipe,
                     ingredient_id=ingredient['id'],
-                    amount=ingredient['amount'],
-                    recipe=recipe
+                    amount=ingredient['amount']
                 )
                 for ingredient in ingredients
             ]
@@ -168,7 +169,8 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         instance.tags.clear()
         tags = validated_data.get('tags')
         self.create_tags(tags, instance)
-        return super().update(instance, validated_data)
+        super().update(instance, validated_data)
+        return instance
 
     def to_representation(self, instance):
         request = self.context.get('request')
@@ -180,3 +182,25 @@ class RecipeToRepresentationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class FavoriteShoppingCartSerializer(serializers.Serializer):
+    class Meta:
+        fields = ('user', 'recipe')
+
+    def validate(self, data, model):
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        recipe = data['recipe']
+        if model.objects.filter(user=request.user, recipe=recipe).exists():
+            raise serializers.ValidationError({
+                'status': 'Рецепт уже добавлен!'
+            })
+        return data
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        context = {'request': request}
+        return RecipeToRepresentationSerializer(
+            instance.recipe, context=context).data
