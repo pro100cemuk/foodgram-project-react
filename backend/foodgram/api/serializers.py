@@ -152,6 +152,7 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(author=author, **validated_data)
         self.create_tags(tags, recipe)
         self.create_ingredients(ingredients, recipe)
+        recipe.save()
         return recipe
 
     def update(self, instance, validated_data):
