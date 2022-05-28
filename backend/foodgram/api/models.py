@@ -78,7 +78,9 @@ class Recipe(models.Model):
         validators=[
             MinValueValidator(
                 1,
-                message={'cooking_time': 'Время должно быть больше 0!'}
+                message={
+                    'cooking_time': 'Время приготовления должно быть больше 0!'
+                }
             )
         ]
     )
