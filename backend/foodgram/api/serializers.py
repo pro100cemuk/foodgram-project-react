@@ -171,7 +171,6 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         self.create_tags(tags, instance)
         return super().update(instance, validated_data)
 
-
     def to_representation(self, instance):
         request = self.context.get('request')
         context = {'request': request}
