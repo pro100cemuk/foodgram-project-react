@@ -9,10 +9,9 @@ from api.serializers import FavoriteShoppingCartSerializer
 def post_delete_favorite_shopping_cart(request, model, obj_id):
     user = request.user
     if request.method == 'POST':
-        data = {'user': user.id, 'recipe': obj_id}
+        data = {'user': user.id, 'recipe': obj_id, 'model': model}
         serializer = FavoriteShoppingCartSerializer(
             data=data,
-            model=model,
             context={'request': request}
         )
         serializer.is_valid(raise_exception=True)

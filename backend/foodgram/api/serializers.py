@@ -187,15 +187,17 @@ class FavoriteShoppingCartSerializer(serializers.Serializer):
     class Meta:
         fields = ('user', 'recipe')
 
-    def validate(self, data, model):
+    def validate(self, data):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
         recipe = data['recipe']
+        model = data['model']
         if model.objects.filter(user=request.user, recipe=recipe).exists():
             raise serializers.ValidationError({
                 'status': 'Рецепт уже добавлен!'
             })
+        del data['model']
         return data
 
     def to_representation(self, instance):
