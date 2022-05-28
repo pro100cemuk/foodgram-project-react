@@ -182,27 +182,3 @@ class RecipeToRepresentationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
-
-
-class FavoriteShoppingCartSerializer(serializers.Serializer):
-    class Meta:
-        fields = ('user', 'recipe')
-
-    def validate(self, data):
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        recipe_id = data['recipe']
-        recipe = get_object_or_404(Recipe, id=recipe_id)
-        model = data.pop['model']
-        if model.objects.filter(user=request.user, recipe=recipe).exists():
-            raise serializers.ValidationError({
-                'status': 'Рецепт уже добавлен!'
-            })
-        return data
-
-    def to_representation(self, instance):
-        request = self.context.get('request')
-        context = {'request': request}
-        return RecipeToRepresentationSerializer(
-            instance.recipe, context=context).data
