@@ -42,7 +42,7 @@ class FollowRecipesSerializer(serializers.ModelSerializer):
 class SubscriptionSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField(read_only=True)
     recipes = serializers.SerializerMethodField(read_only=True)
-    recipes_count = serializers.SerializerIntegerField(
+    recipes_count = serializers.IntegerField(
         source='recipes.count',
         read_only=True
     )
