@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -191,9 +192,10 @@ class FavoriteShoppingCartSerializer(serializers.Serializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        recipe = data['recipe']
+        recipe_id = data['recipe']
+        recipe = get_object_or_404(Recipe, id=recipe_id)
         model = data.pop['model']
-        if model.objects.filter(user=request.user, recipe_id=recipe).exists():
+        if model.objects.filter(user=request.user, recipe=recipe).exists():
             raise serializers.ValidationError({
                 'status': 'Рецепт уже добавлен!'
             })
