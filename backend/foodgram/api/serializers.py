@@ -135,7 +135,7 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
             [
                 IngredientRecipe(
                     recipe=recipe,
-                    ingredient_id=ingredient['id'],
+                    ingredient=ingredient['id'],
                     amount=ingredient['amount']
                 )
                 for ingredient in ingredients
@@ -169,8 +169,8 @@ class RecipesWriteSerializer(serializers.ModelSerializer):
         instance.tags.clear()
         tags = validated_data.get('tags')
         self.create_tags(tags, instance)
-        super().update(instance, validated_data)
-        return instance
+        return super().update(instance, validated_data)
+
 
     def to_representation(self, instance):
         request = self.context.get('request')
