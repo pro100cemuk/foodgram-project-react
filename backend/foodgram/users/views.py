@@ -56,10 +56,9 @@ class CustomUserViewSet(UserViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            following = get_object_or_404(User, id=id)
-            follow = get_object_or_404(
-                Follow, user=user, author=following
-            )
-            follow.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        following = get_object_or_404(User, id=id)
+        follow = get_object_or_404(
+            Follow, user=user, author=following
+        )
+        follow.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
